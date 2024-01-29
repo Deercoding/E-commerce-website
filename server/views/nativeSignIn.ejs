@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function signin() {
+        let provider = document.getElementById("provider").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        postData("/user/signin", {
+          provider: provider,
+          email: email,
+          password: password,
+        })
+          .then((response) => {
+            localStorage.setItem(
+              "Authorization",
+              "Bearer " + response.data.access_token
+            );
+            sendData("Success: token is saved in local storage.");
+          })
+          .catch((result) => console.log(result));
+      }
+
+      function signup() {
+        let username = document.getElementById("signup-username").value;
+        let email = document.getElementById("signup-email").value;
+        let password = document.getElementById("signup-password").value;
+        postData("/user/signup", {
+          name: username,
+          email: email,
+          password: password,
+        })
+          .then((response) => {
+            localStorage.setItem(
+              "Authorization",
+              "Bearer " + response.data.access_token
+            );
+            sendData("Success: token is saved in local storage.");
+          })
+          .catch((result) => console.log(result));
+      }
+
+      function sendData(result) {
+        document.getElementById("server").innerHTML = JSON.stringify(result);
+      }
+
+      async function postData(url, data) {
+        return await fetch(url, {
+          body: JSON.stringify(data),
+          headers: {
+            "content-type": "application/json",
+          },
+          method: "POST",
+        }).then((response) => response.json());
+      }
+    </script>
+  </head>
+  <body>
+    <h2>Sign In Form</h2>
+    <label for="provider">provider</label>
+    <input type="text" id="provider" value="native" />
+    <br />
+    <label for="email">email</label>
+    <input type="text" id="email" />
+    <br />
+    <label for="password">password</label>
+    <input type="text" id="password" />
+    <br />
+    <button onclick="signin()">Sign in</button>
+
+    <h2>Sign up Form</h2>
+    <label for="username">username</label>
+    <input type="text" id="signup-username" />
+    <br />
+    <label for="email">email</label>
+    <input type="text" id="signup-email" />
+    <br />
+    <label for="password">password</label>
+    <input type="text" id="signup-password" />
+    <br />
+    <button onclick="signup()">Sign up</button>
+    <div id="server"></div>
+  </body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="jumbotron"></div>
+      <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input
+            type="email"
+            class="form-control"
+            id="exampleInputEmail1"
+            placeholder="Email"
+          />
+        </div>
+        <div class="form-group card-number-group">
+          <label for="card-number" class="control-label"
+            ><span id="cardtype"></span>卡號</label
+          >
+          <div input="form-control card-number"></div>
+        </div>
+        <div class="form-group expiration-date-group">
+          <label for="expiration-date" class="control-label">卡片到期日</label>
+          <div
+            class="form-control expiration-date"
+            id="tappay-expiration-date"
+          ></div>
+        </div>
+        <div class="form-group ccv-group">
+          <label for="ccv" class="control-label">卡片後三碼</label>
+          <div class="form-control ccv"></div>
+        </div>
+
+        <button type="submit" class="btn btn-default">Pay</button>
+      </form>
+      <br />
+      <pre class="jumbotron text-left" id="curl"></pre>
+    </div>
+    <div id="server"></div>
+    <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.17.0"></script>
+
+    <script>
+      TPDirect.setupSDK(
+        12348,
+        "app_pa1pQcKoY22IlnSXq5m5WP5jFKzoRG58VEXpT7wU62ud7mMbDOGzCYIlzzLF",
+        "sandbox"
+      );
+      TPDirect.card.setup({
+        fields: {
+          number: {
+            element: ".form-control.card-number",
+            placeholder: "**** **** **** ****",
+          },
+          expirationDate: {
+            element: ".form-control.expiration-date",
+            placeholder: "MM / YY",
+          },
+          ccv: {
+            element: ".form-control.ccv",
+            placeholder: "後三碼",
+          },
+        },
+        isMaskCreditCardNumber: true,
+        maskCreditCardNumberRange: {
+          beginIndex: 6,
+          endIndex: 11,
+        },
+      });
+
+      TPDirect.card.onUpdate(function (update) {
+        const submitButton = document.querySelector('button[type="submit"]');
+        if (update.canGetPrime) {
+          submitButton.removeAttribute("disabled");
+        } else {
+          submitButton.setAttribute("disabled", true);
+        }
+
+        let newType = "";
+        if (update.cardType != "unknown") {
+          newType = update.cardType;
+        }
+
+        const cardType = document.querySelector("#cardtype");
+        cardType.textContent = newType;
+
+        if (update.status.number === 2) {
+          setNumberFormGroupToError(".card-number-group");
+        } else if (update.status.number === 0) {
+          setNumberFormGroupToSuccess(".card-number-group");
+        } else {
+          setNumberFormGroupToNormal(".card-number-group");
+        }
+
+        if (update.status.expiry === 2) {
+          setNumberFormGroupToError(".expiration-date-group");
+        } else if (update.status.expiry === 0) {
+          setNumberFormGroupToSuccess(".expiration-date-group");
+        } else {
+          setNumberFormGroupToNormal(".expiration-date-group");
+        }
+
+        if (update.status.ccv === 2) {
+          setNumberFormGroupToError(".ccv-group");
+        } else if (update.status.ccv === 0) {
+          setNumberFormGroupToSuccess(".ccv-group");
+        } else {
+          setNumberFormGroupToNormal(".ccv-group");
+        }
+      });
+
+      document
+        .querySelector("form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          forceBlurIos();
+
+          const tappayStatus = TPDirect.card.getTappayFieldsStatus();
+          console.log(tappayStatus);
+
+          // Check TPDirect.card.getTappayFieldsStatus().canGetPrime before TPDirect.card.getPrime
+          if (tappayStatus.canGetPrime === false) {
+            console.log("can not get prime");
+            return;
+          }
+
+          // Get prime
+          TPDirect.card.getPrime(function (result) {
+            if (result.status !== 0) {
+              console.log("get prime error " + result.msg);
+              return;
+            }
+            console.log("Success! Prime: " + result.card.prime);
+            let order = {
+              prime: result.card.prime,
+              order: {
+                shipping: "delivery",
+                payment: "credit_card",
+                subtotal: 1234,
+                freight: 14,
+                total: 1300,
+                recipient: {
+                  name: "Luke",
+                  phone: "0987654321",
+                  email: "luke@gmail.com",
+                  address: "市政府站",
+                  time: "morning",
+                },
+                list: [
+                  {
+                    id: 1,
+                    name: "商品一",
+                    price: 1299,
+                    color: {
+                      code: "334455",
+                      name: "淺藍",
+                    },
+                    size: "S",
+                    qty: 1,
+                  },
+                  {
+                    id: 3,
+                    name: "商品二",
+                    price: 1500,
+                    color: {
+                      code: "UUUUUU",
+                      name: "紅色",
+                    },
+                    size: "M",
+                    qty: 1,
+                  },
+                  {
+                    id: 12,
+                    name: "商品三",
+                    price: 1500,
+                    color: {
+                      code: "yyyyyyy",
+                      name: "紅色",
+                    },
+                    size: "L",
+                    qty: 2,
+                  },
+                ],
+              },
+            };
+
+            checkout(order);
+          });
+        });
+
+      //token setup
+      function checkout(data) {
+        postData("/order/checkout", {
+          data,
+        })
+          .then((result) => sendData(result))
+          .catch((result) => console.log(result));
+
+        function sendData(result) {
+          document.getElementById("server").innerHTML = JSON.stringify(result);
+        }
+      }
+
+      async function postData(url, data) {
+        return await fetch(url, {
+          body: JSON.stringify(data),
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        }).then((response) => response.json());
+      }
+
+      function setNumberFormGroupToError(selector) {
+        let element = document.querySelector(selector);
+        element.classList.add("has-error");
+        element.classList.remove("has-success");
+      }
+
+      function setNumberFormGroupToSuccess(selector) {
+        let element = document.querySelector(selector);
+        element.classList.add("has-error");
+        element.classList.remove("has-success");
+      }
+
+      function setNumberFormGroupToSuccess(selector) {
+        let element = document.querySelector(selector);
+        element.classList.add("has-success");
+        element.classList.remove("has-error");
+      }
+
+      function setNumberFormGroupToNormal(selector) {
+        let element = document.querySelector(selector);
+        element.classList.remove("has-error");
+        element.classList.remove("has-success");
+      }
+
+      function forceBlurIos() {
+        if (!isIos()) {
+          return;
+        }
+        let input = document.createElement("input");
+        input.setAttribute("type", "text");
+        document.activeElement.prepend(input);
+        input.focus();
+        input.parentNode.removeChild(input);
+      }
+
+      function isIos() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      }
+    </script>
+  </body>
+</html>

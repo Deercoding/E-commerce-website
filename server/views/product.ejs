@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product</title>
+    <script>
+      updateList = function () {
+        let input = document.getElementById("file");
+        let output = document.getElementById("fileList");
+        let children = "";
+        for (let i = 0; i < input.files.length; ++i) {
+          children += "<li>" + input.files.item(i).name + "</li>";
+        }
+        output.innerHTML = "<ul>" + children + "</ul>";
+      };
+    </script>
+  </head>
+  <body>
+    <div>
+      <form action="/admin/product" method="post" enctype="multipart/form-data">
+        <h2>Product Basic Information</h2>
+        <label for="title">title</label>
+        <input id="title" type="text" name="title" />
+        <br />
+        <label for="category">category</label>
+        <input id="category" type="text" name="category" />
+        <br />
+        <label for="description">description</label>
+        <input id="description" type="text" name="description" />
+        <br />
+        <label for="price">price</label>
+        <input id="price" type="number" name="price" />
+        <br />
+        <label for="texture">texture</label>
+        <input id="texture" type="text" name="texture" />
+        <br />
+        <label for="wash">wash</label>
+        <input id="wash" type="text" name="wash" />
+        <br />
+        <label for="place">place</label>
+        <input id="place" type="text" name="place" />
+        <br />
+        <label for="note">note</label>
+        <input id="note" type="text" name="note" />
+        <br />
+        <label for="story">story</label>
+        <input id="story" type="text" name="story" />
+
+        <br />
+        <br />
+        <label for="mainfile">Upload 1 main_image</label>
+        <input id="mainfile" type="file" name="file" required />
+
+        <br />
+        <br />
+        <label for="file">Upload 1-20 images</label>
+        <input
+          id="file"
+          type="file"
+          name="file"
+          onchange="updateList()"
+          multiple
+        />
+        <div id="fileList"></div>
+
+        <h2>Input Product Variant</h2>
+        <p>Varaint 1 (Please input one variant)</p>
+        <label for="color_code">color_code</label>
+        <input id="color_code" type="text" name="color_code" />
+        <label for="color_name">color_name</label>
+        <input id="color_name" type="text" name="color_name" />
+        <label for="size">size</label>
+        <input id="size" type="text" name="size" />
+        <label for="stock">stock</label>
+        <input id="stock" type="number" name="stock" />
+        <br />
+        <p>Varaint 2 (Can be empty)</p>
+        <label for="color_code2">color_code</label>
+        <input id="color_code2" type="text" name="color_code2" />
+        <label for="color_name2">color_name</label>
+        <input id="color_name2" type="text" name="color_name2" />
+        <label for="size2">size</label>
+        <input id="size2" type="text" name="size2" />
+        <label for="stock2">stock</label>
+        <input id="stock2" type="number" name="stock2" />
+
+        <p>Varaint 3 (Can be empty)</p>
+        <label for="color_code3">color_code</label>
+        <input id="color_code3" type="text" name="color_code3" />
+        <label for="color_name3">color_name</label>
+        <input id="color_name3" type="text" name="color_name3" />
+        <label for="size3">size</label>
+        <input id="size3" type="text" name="size3" />
+        <label for="stock3">stock</label>
+        <input id="stock3" type="number" name="stock3" />
+
+        <br />
+        <br />
+
+        <button type="submit">Send</button>
+      </form>
+
+      <!-- <h2>Input Image</h2>
+      <form action="/photo" method="post" enctype="multipart/form-data">
+        <input
+          id="file"
+          type="file"
+          name="file"
+          onchange="updateList()"
+          multiple
+        />
+        <button>Send</button>
+        <div id="fileList"></div>
+      </form> -->
+    </div>
+  </body>
+</html>

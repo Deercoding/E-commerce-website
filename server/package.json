@@ -1,0 +1,45 @@
+{
+  "name": "part-2",
+  "version": "1.0.0",
+  "description": "Amazon Web Service (AWS) is the most popular cloud service in the world. Today we should use AWS as infrastructure for web server.",
+  "main": "Express.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.433.0",
+    "@aws-sdk/credential-providers": "^3.433.0",
+    "@aws-sdk/s3-request-presigner": "^3.433.0",
+    "@aws-sdk/util-format-url": "^3.433.0",
+    "@smithy/hash-node": "^2.0.12",
+    "@smithy/protocol-http": "^3.0.8",
+    "@smithy/url-parser": "^2.0.12",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "express": "^4.18.2",
+    "joi": "^17.10.2",
+    "jsonwebtoken": "^9.0.2",
+    "morgan-body": "^2.6.9",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.1",
+    "nodemon": "^3.0.1",
+    "redis": "^4.6.10",
+    "vitest": "^1.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.51.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0"
+  }
+}

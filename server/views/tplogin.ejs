@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FB login</title>
+  </head>
+  <body>
+    <p>FB login</p>
+    <script>
+      window.fbAsyncInit = function () {
+        FB.init({
+          appId: "1477528473032553",
+          cookie: true,
+          xfbml: true,
+          version: "v16.0",
+        });
+        FB.getLoginStatus(function (response) {
+          statusChangeCallback(response);
+        });
+      };
+
+      (function (d, s, id) {
+        var js,
+          fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+          return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      })(document, "script", "facebook-jssdk");
+
+      function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+          statusChangeCallback(response);
+        });
+      }
+
+      function statusChangeCallback(response) {
+        if (response.status == "connected") {
+          postData("http://localhost/user/signin", {
+            accessToken: response.authResponse.accessToken,
+            provider: response.authResponse.graphDomain,
+            userID: response.authResponse.userID,
+          })
+            .then((result) => sendData(result))
+            .catch((result) => sendData(result));
+
+          function sendData(result) {
+            document.getElementById("server").innerHTML =
+              JSON.stringify(result);
+          }
+
+          async function postData(url, data) {
+            return await fetch(url, {
+              body: JSON.stringify(data),
+              headers: {
+                "content-type": "application/json",
+              },
+              method: "POST",
+            }).then((response) => response.json());
+          }
+        } else {
+          console.log("Not logged in ");
+        }
+      }
+    </script>
+
+    <fb:login-button scope="public_profile, email" onlogin="checkLoginState();">
+    </fb:login-button>
+    <div id="server"></div>
+  </body>
+</html>

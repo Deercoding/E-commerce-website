@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="/admin/campaigns" method="post" enctype="multipart/form-data">
+      <h2>Campaigns</h2>
+      <label for="product_id">Campaign product_id</label>
+      <input id="product_id" type="text" name="product_id" required />
+      <br />
+      <label for="story">Campaign Story</label>
+      <input id="story" type="text" name="story" required />
+      <br />
+      <label for="picture">Upload 1 Campaign Image</label>
+      <input id="picture" type="file" name="picture" required />
+      <button type="submit">Send Campaign</button>
+    </form>
+  </body>
+</html>
