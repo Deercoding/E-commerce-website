@@ -1,4 +1,4 @@
-# E-commerce website 
+# E-commerce website (Project Completed in 2023)
 
 STYLiSH
 An e-commerce website offering a complete shopping experience and customer support chat room.
